@@ -22,6 +22,8 @@ layout: base.njk
     <h1>{{ title | brand | safe }}</h1>
   </header>
 
+  {% include "bilibili.njk" %}
+
   <div class="wrap post-body reveal">
     {{ content | safe }}
   </div>

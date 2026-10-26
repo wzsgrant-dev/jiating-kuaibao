@@ -6,11 +6,52 @@ import { PATH_PREFIX } from "./scripts/prefix.js";
 
 const INPUT_DIR = path.resolve("src");
 
+const BVID = /^BV[0-9A-Za-z]{10}$/;
+
 function stripPrefix(url) {
   if (!url || PATH_PREFIX === "/") return url || "";
   if (url === PATH_PREFIX || url === PATH_PREFIX.slice(0, -1)) return "/";
   if (url.startsWith(PATH_PREFIX)) return `/${url.slice(PATH_PREFIX.length)}`;
   return url;
+}
+
+function assertBvid(value, inputPath) {
+  if (value == null || value === false) return "";
+  const id = String(value).trim();
+  if (!id) return "";
+  if (!BVID.test(id)) {
+    const where = inputPath ? ` (${inputPath})` : "";
+    throw new Error(`bvid must be BV plus 10 letters or digits${where}: ${id}`);
+  }
+  return id;
+}
+
+function assertNoExternalUrls(inputPath) {
+  const raw = readFileSync(inputPath, "utf8");
+  if (/https?:\/\//i.test(raw) || /(?:src|href)\s*=\s*["']\/\//i.test(raw)) {
+    throw new Error(`External URLs are not allowed in ${inputPath}`);
+  }
+}
+
+function loadBooks() {
+  const books = JSON.parse(readFileSync(path.resolve("src/_data/books.json"), "utf8"));
+  if (!Array.isArray(books)) throw new Error("src/_data/books.json must be an array");
+  const ids = new Set();
+  for (const book of books) {
+    if (!book || typeof book !== "object") throw new Error("Each book must be an object");
+    if (!book.id || !/^[-a-z0-9]+$/.test(book.id)) {
+      throw new Error(`Book id must be lowercase letters, numbers, and hyphens: ${book.id}`);
+    }
+    if (ids.has(book.id)) throw new Error(`Duplicate book id: ${book.id}`);
+    ids.add(book.id);
+    if (!book.title || !String(book.title).trim()) throw new Error(`Book is missing title: ${book.id}`);
+    for (const field of ["author", "translatorNote"]) {
+      if (book[field] != null && typeof book[field] !== "string") {
+        throw new Error(`${field} must be a string: ${book.id}`);
+      }
+    }
+  }
+  return books;
 }
 
 export default function (eleventyConfig) {
@@ -70,6 +111,33 @@ export default function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter("unprefix", (url) => stripPrefix(url));
+
+  eleventyConfig.addFilter("safeBvid", (value) => {
+    const id = assertBvid(value);
+    if (!id) throw new Error("A Bilibili embed needs a bvid");
+    return id;
+  });
+
+  eleventyConfig.addFilter("bookMeta", (books, id) => {
+    const found = (books || []).find((book) => book.id === id);
+    if (!found) throw new Error(`Unknown book id: ${id}`);
+    return found;
+  });
+
+  eleventyConfig.addFilter("bookChapters", (chapters, bookId) => {
+    return (chapters || [])
+      .filter((item) => item.data.book === bookId && !item.data.draft)
+      .sort((a, b) => Number(a.data.chapter) - Number(b.data.chapter));
+  });
+
+  eleventyConfig.addFilter("chapterNav", (chapters, pageUrl) => {
+    const list = chapters || [];
+    const index = list.findIndex((item) => item.url === pageUrl);
+    return {
+      prev: index > 0 ? list[index - 1] : null,
+      next: index >= 0 && index < list.length - 1 ? list[index + 1] : null,
+    };
+  });
 
   eleventyConfig.addFilter("coverSrc", (inputPath, cover) => {
     if (!cover || typeof cover !== "string") {
@@ -133,12 +201,40 @@ export default function (eleventyConfig) {
       if (post.data.category != null && typeof post.data.category !== "string") {
         throw new Error(`category must be a string: ${post.inputPath}`);
       }
-      const raw = readFileSync(post.inputPath, "utf8");
-      if (/https?:\/\//i.test(raw) || /(?:src|href)\s*=\s*["']\/\//i.test(raw)) {
-        throw new Error(`External URLs are not allowed in ${post.inputPath}`);
-      }
+      assertBvid(post.data.bvid, post.inputPath);
+      assertNoExternalUrls(post.inputPath);
     }
     return posts.sort((a, b) => b.date - a.date);
+  });
+
+  eleventyConfig.addCollection("chapters", (api) => {
+    const books = loadBooks();
+    const ids = new Set(books.map((book) => book.id));
+    const chapters = api.getFilteredByGlob("src/chapters/**/*.md").filter((chapter) => !chapter.data.draft);
+    const seen = new Set();
+    for (const chapter of chapters) {
+      if (!chapter.data.title) throw new Error(`Chapter is missing title: ${chapter.inputPath}`);
+      if (!ids.has(chapter.data.book)) {
+        throw new Error(`Chapter book must match an id in src/_data/books.json: ${chapter.inputPath}`);
+      }
+      if (!Number.isInteger(chapter.data.chapter) || chapter.data.chapter < 1) {
+        throw new Error(`chapter must be a positive integer: ${chapter.inputPath}`);
+      }
+      if (!(chapter.date instanceof Date) || Number.isNaN(chapter.date.getTime())) {
+        throw new Error(`Chapter is missing date: ${chapter.inputPath}`);
+      }
+      const key = `${chapter.data.book}:${chapter.data.chapter}`;
+      if (seen.has(key)) {
+        throw new Error(`Duplicate chapter ${chapter.data.chapter} for book ${chapter.data.book}`);
+      }
+      seen.add(key);
+      assertBvid(chapter.data.bvid, chapter.inputPath);
+      assertNoExternalUrls(chapter.inputPath);
+    }
+    return chapters.sort((a, b) => {
+      if (a.data.book !== b.data.book) return String(a.data.book).localeCompare(String(b.data.book));
+      return a.data.chapter - b.data.chapter;
+    });
   });
 
   // Reserved for a later sections nav. v1 renders nothing from this.

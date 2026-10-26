@@ -59,7 +59,8 @@ a {
 }
 
 a:focus-visible,
-.home-button:focus-visible {
+.home-button:focus-visible,
+.button-quiet:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
@@ -433,6 +434,242 @@ time::before {
   }
 }
 
+.sample-flag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin: 0 0 8px;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: #f3e1d4;
+  color: var(--accent-dark);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.serial {
+  padding: 4px 0 8px;
+}
+
+.serial-card {
+  background: var(--paper);
+  border-block: 1px solid var(--line);
+}
+
+.serial-card + .serial-card {
+  border-top: 0;
+}
+
+.serial-card .wrap {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+
+.serial-card h2,
+.feed-label h2,
+.book-head h1,
+.chapter-head h1 {
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.serial-card h2 {
+  font-size: clamp(30px, 8vw, 44px);
+  line-height: 1.35;
+}
+
+.serial-author,
+.serial-note,
+.book-author,
+.book-note {
+  margin-top: 8px;
+  color: var(--soft);
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.serial-latest {
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.serial-card .home-button,
+.serial-card .button-quiet {
+  margin-top: 14px;
+}
+
+.button-quiet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 20px;
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button-quiet:active {
+  background: #f3e6da;
+}
+
+.home-button.is-disabled {
+  border: 2px solid var(--line);
+  background: transparent;
+  color: var(--soft);
+}
+
+.feed-label {
+  padding-top: 28px;
+  padding-bottom: 4px;
+}
+
+.feed-label h2 {
+  font-size: clamp(28px, 7vw, 40px);
+  line-height: 1.3;
+}
+
+.book-head,
+.chapter-head {
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.book-head h1,
+.chapter-head h1 {
+  font-size: clamp(36px, 9vw, 56px);
+  line-height: 1.35;
+}
+
+.chapter-kicker {
+  margin-bottom: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.chapter-kicker a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.chapter-list {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 72px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+
+.chapter-link:active {
+  background: #f3e6da;
+}
+
+.chapter-link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -4px;
+}
+
+.chapter-num {
+  color: var(--accent);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.chapter-name {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.book-back {
+  padding-top: 28px;
+  padding-bottom: 8px;
+}
+
+.chapter-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 28px;
+  padding-bottom: 8px;
+}
+
+.chapter-nav .button-quiet {
+  margin-top: 0;
+}
+
+.bilibili {
+  margin-top: 16px;
+}
+
+.bilibili-frame {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 56.25%;
+  overflow: hidden;
+  background: #2a211c;
+}
+
+.bilibili-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.bilibili-open {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 8px;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.bilibili-open a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
+@media (forced-colors: active) {
+  .button-quiet,
+  .home-button.is-disabled,
+  .bilibili-frame {
+    border: 2px solid ButtonText;
+  }
+}
+
 @media (min-width: 760px) {
   .wrap {
     padding-inline: 28px;
@@ -445,5 +682,9 @@ time::before {
 
   .story-copy {
     padding-top: 24px;
+  }
+
+  .bilibili-frame {
+    border-radius: 18px;
   }
 }
