@@ -56,6 +56,19 @@ export default function (eleventyConfig) {
     return date.toISOString().slice(0, 10);
   });
 
+  const brandPlain = "莲tara";
+  const brandHtml =
+    '<span class="brand"><span class="name-han">莲</span><span class="name-latin">tara</span></span>';
+  eleventyConfig.addFilter("brand", (value) => {
+    const text = String(value ?? "");
+    return text
+      .split(brandPlain)
+      .map((part) =>
+        part.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;")
+      )
+      .join(brandHtml);
+  });
+
   eleventyConfig.addFilter("unprefix", (url) => stripPrefix(url));
 
   eleventyConfig.addFilter("coverSrc", (inputPath, cover) => {

@@ -1,13 +1,13 @@
 ---
 layout: base.njk
-title: 家庭快报
+title: 莲tara
 isHome: true
 permalink: /
 ---
 <section class="hero">
   <div class="wrap">
-    <p class="seal" aria-hidden="true">家</p>
-    <h1>{{ site.title }}</h1>
+    <p class="seal" aria-hidden="true">{{ site.nameHan }}</p>
+    <h1>{{ site.title | brand | safe }}</h1>
     <p class="subtitle">
       <span>{{ site.subtitleLead }}</span><span>{{ site.subtitleTail }}</span>
     </p>
@@ -30,7 +30,7 @@ permalink: /
       </div>
       <div class="wrap story-copy">
         <time datetime="{{ post.date | isoDate }}">{{ post.date | zhDate }}</time>
-        <h2>{{ post.data.title }}</h2>
+        <h2>{{ post.data.title | brand | safe }}</h2>
         <p>{{ post | autoExcerpt }}</p>
         <p class="more">阅读这一篇</p>
       </div>

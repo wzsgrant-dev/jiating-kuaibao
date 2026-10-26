@@ -19,7 +19,7 @@ layout: base.njk
 
   <header class="wrap post-head reveal">
     <time datetime="{{ page.date | isoDate }}">{{ page.date | zhDate }}</time>
-    <h1>{{ title }}</h1>
+    <h1>{{ title | brand | safe }}</h1>
   </header>
 
   <div class="wrap post-body reveal">

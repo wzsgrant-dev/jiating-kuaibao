@@ -1,4 +1,4 @@
-# 家庭快报
+# 莲tara
 
 给家里看的静态小站。手机上打开，字大、对比清楚、没有登录，也没有任何第三方脚本。页面发布在：
 
@@ -108,4 +108,4 @@ There is no section nav in v1. A `category` field is already collected into `col
 
 To turn that into real sections, read `collections.categories` in `src/_includes/base.njk`, add one row of links, and give each category a page. Posts can stay where they are.
 
-The included post 「示例：家庭快报开张啦」 is a layout sample. Replace it with real notes. Its pictures are locally generated warm shapes, not photographs of people.
+The included post 「示例：莲tara 开张啦」 is a layout sample. Replace it with real notes. Its pictures are locally generated warm shapes, not photographs of people.
