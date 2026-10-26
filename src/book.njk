@@ -1,0 +1,37 @@
+---
+layout: base.njk
+pagination:
+  data: books
+  size: 1
+  alias: book
+permalink: "/books/{{ book.id }}/"
+eleventyComputed:
+  title: "连载：《{{ book.title }}》"
+  description: "{{ book.translatorNote or book.title }}"
+---
+{% set chapters = collections.chapters | bookChapters(book.id) %}
+<section class="book">
+  <header class="wrap book-head">
+    {% if book.sample %}<p class="sample-flag">示例</p>{% endif %}
+    <h1>连载：《{{ book.title }}》</h1>
+    {% if book.author %}<p class="book-author">作者：{{ book.author }}</p>{% endif %}
+    {% if book.translatorNote %}<p class="book-note">{{ book.translatorNote }}</p>{% endif %}
+  </header>
+
+  <ol class="chapter-list">
+    {% for item in chapters %}
+    <li>
+      <a class="chapter-link" href="{{ item.url | unprefix }}">
+        <span class="chapter-num">第{{ item.data.chapter }}章</span>
+        <span class="chapter-name">{{ item.data.title }}</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="wrap empty"><p>还没有章节。</p></li>
+    {% endfor %}
+  </ol>
+
+  <div class="wrap book-back">
+    <a class="home-button" href="/">返回首页</a>
+  </div>
+</section>

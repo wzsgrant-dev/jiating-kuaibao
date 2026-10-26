@@ -3,7 +3,7 @@
   try {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    document.querySelectorAll(".post-body > *, .post-toolbar-bottom, .site-footer").forEach(function (node) {
+    document.querySelectorAll(".post-body > *, .post-toolbar-bottom, .chapter-nav, .book-back, .site-footer").forEach(function (node) {
       node.classList.add("reveal");
     });
 

@@ -14,7 +14,32 @@ permalink: /
   </div>
 </section>
 
+<section class="serial" aria-label="连载">
+  {% for book in books %}
+  {% set chapters = collections.chapters | bookChapters(book.id) %}
+  {% set latest = chapters | last %}
+  <article class="serial-card">
+    <div class="wrap">
+      {% if book.sample %}<p class="sample-flag">示例</p>{% endif %}
+      <h2>连载：《{{ book.title }}》</h2>
+      {% if book.author %}<p class="serial-author">作者：{{ book.author }}</p>{% endif %}
+      {% if book.translatorNote %}<p class="serial-note">{{ book.translatorNote }}</p>{% endif %}
+      {% if latest %}
+      <p class="serial-latest">第{{ latest.data.chapter }}章 · {{ latest.data.title }}</p>
+      <a class="home-button" href="{{ latest.url | unprefix }}">继续读第{{ latest.data.chapter }}章</a>
+      {% else %}
+      <p class="serial-note">还没有章节。</p>
+      {% endif %}
+      <a class="button-quiet" href="/books/{{ book.id }}/">目录</a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
 <section class="feed" aria-label="近况">
+  <div class="wrap feed-label">
+    <h2>近况</h2>
+  </div>
   {% set posts = collections.posts %}
   {% for post in posts %}
   <article class="story reveal"{% if post.data.category %} data-category="{{ post.data.category }}"{% endif %}>
