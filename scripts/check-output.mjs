@@ -68,7 +68,9 @@ if (/https?:\/\//i.test(css) || /@import/i.test(css)) problems.push("stylesheet 
 
 const home = await readFile(path.join(siteDir, "index.html"), "utf8");
 if (!home.includes("2026年10月26日")) problems.push("home page is missing the Chinese date");
-if (!home.includes("示例：家庭快报开张啦")) problems.push("home page is missing the sample title");
+if (!home.includes("<title>莲tara</title>")) problems.push("home page title is not 莲tara");
+if (!home.includes("示例：") || !home.includes("开张啦")) problems.push("home page is missing the sample title");
+if (home.includes("家庭快报")) problems.push("home page still says 家庭快报");
 if (!home.includes(".webp") || !home.includes(".jpeg")) {
   problems.push("home page is missing WebP and JPEG sources");
 }
@@ -83,6 +85,7 @@ for (const file of htmlFiles) {
     problems.push(`${rel} is missing noindex, nofollow`);
   }
   if (!text.includes('lang="zh-Hans"')) problems.push(`${rel} is missing zh-Hans`);
+  if (text.includes("家庭快报")) problems.push(`${rel} still says 家庭快报`);
   if (/https?:\/\//i.test(text)) problems.push(`${rel} contains an http(s) URL`);
   if (/(?:src|href)\s*=\s*["']\/\//i.test(text)) problems.push(`${rel} contains a protocol-relative URL`);
   if (rel.startsWith("posts/")) {

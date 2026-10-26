@@ -17,7 +17,7 @@
   <div class="letterhead" aria-hidden="true"></div>
   <header class="site-header">
     <div class="wrap inner">
-      <a class="wordmark" href="/"{% if isHome %} aria-current="page"{% endif %}>家庭快报</a>
+      <a class="wordmark" href="/"{% if isHome %} aria-current="page"{% endif %}>{{ site.title | brand | safe }}</a>
     </div>
   </header>
   <main id="main">

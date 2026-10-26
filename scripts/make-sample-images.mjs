@@ -53,9 +53,9 @@ await sharp(Buffer.from(cover)).jpeg({ quality: 92, mozjpeg: true }).toFile(path
 await sharp(Buffer.from(figure)).jpeg({ quality: 92, mozjpeg: true }).toFile(path.join(dir, "figure.jpg"));
 
 const icon = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#8C3B24"/>
-  <rect x="7" y="7" width="18" height="18" fill="none" stroke="#FFF8F3" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#8C3B24"/>
+  <text x="32" y="46" text-anchor="middle" font-family="Noto Sans CJK SC" font-size="40" font-weight="700" fill="#FFF8F3">莲</text>
 </svg>`;
 await sharp(Buffer.from(icon)).png().toFile(path.resolve(dir, "../../favicon.png"));
 console.log("wrote sample images");
