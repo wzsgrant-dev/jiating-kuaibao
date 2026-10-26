@@ -1,0 +1,44 @@
+---
+layout: base.njk
+title: 家庭快报
+isHome: true
+permalink: /
+---
+<section class="hero">
+  <div class="wrap">
+    <p class="seal" aria-hidden="true">家</p>
+    <h1>{{ site.title }}</h1>
+    <p class="subtitle">
+      <span>{{ site.subtitleLead }}</span><span>{{ site.subtitleTail }}</span>
+    </p>
+  </div>
+</section>
+
+<section class="feed" aria-label="近况">
+  {% set posts = collections.posts %}
+  {% for post in posts %}
+  <article class="story reveal"{% if post.data.category %} data-category="{{ post.data.category }}"{% endif %}>
+    <a class="story-link" href="{{ post.url | unprefix }}">
+      <div class="story-photo">
+        <img
+          src="{{ post.inputPath | coverSrc(post.data.cover) }}"
+          alt="{{ post.data.coverAlt }}"
+          {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+          decoding="async"
+          sizes="100vw"
+        >
+      </div>
+      <div class="wrap story-copy">
+        <time datetime="{{ post.date | isoDate }}">{{ post.date | zhDate }}</time>
+        <h2>{{ post.data.title }}</h2>
+        <p>{{ post | autoExcerpt }}</p>
+        <p class="more">阅读这一篇</p>
+      </div>
+    </a>
+  </article>
+  {% else %}
+  <div class="wrap empty">
+    <p>还没有近况。新的一篇写好以后，会出现在这里。</p>
+  </div>
+  {% endfor %}
+</section>

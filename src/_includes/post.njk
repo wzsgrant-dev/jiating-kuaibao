@@ -1,0 +1,32 @@
+---
+layout: base.njk
+---
+<article class="post">
+  <div class="wrap post-toolbar">
+    <a class="home-button" href="/">返回首页</a>
+  </div>
+
+  <figure class="story-hero">
+    <img
+      src="{{ page.inputPath | coverSrc(cover) }}"
+      alt="{{ coverAlt }}"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      sizes="100vw"
+    >
+  </figure>
+
+  <header class="wrap post-head reveal">
+    <time datetime="{{ page.date | isoDate }}">{{ page.date | zhDate }}</time>
+    <h1>{{ title }}</h1>
+  </header>
+
+  <div class="wrap post-body reveal">
+    {{ content | safe }}
+  </div>
+
+  <div class="wrap post-toolbar post-toolbar-bottom">
+    <a class="home-button" href="/">返回首页</a>
+  </div>
+</article>

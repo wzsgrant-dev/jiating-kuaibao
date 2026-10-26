@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#F6F1EA">
+  <title>{% if title and title != site.title %}{{ title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  {% set summary = description or excerpt or (site.subtitleLead + site.subtitleTail) %}
+  <meta name="description" content="{{ summary }}">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <div class="letterhead" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="wrap inner">
+      <a class="wordmark" href="/"{% if isHome %} aria-current="page"{% endif %}>家庭快报</a>
+    </div>
+  </header>
+  <main id="main">
+    {{ content | safe }}
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>{{ site.footer }}</p>
+    </div>
+  </footer>
+  <script src="/assets/scroll.js" defer></script>
+</body>
+</html>
