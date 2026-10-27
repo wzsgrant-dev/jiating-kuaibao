@@ -41,18 +41,21 @@ permalink: /
     <h2>近况</h2>
   </div>
   {% set posts = collections.posts %}
+  {% set eagerCover = posts | firstCoverUrl %}
   {% for post in posts %}
-  <article class="story reveal"{% if post.data.category %} data-category="{{ post.data.category }}"{% endif %}>
+  <article class="story{% if not post.data.cover %} story-plain{% endif %} reveal"{% if post.data.category %} data-category="{{ post.data.category }}"{% endif %}>
     <a class="story-link" href="{{ post.url | unprefix }}">
+      {% if post.data.cover %}
       <div class="story-photo">
         <img
           src="{{ post.inputPath | coverSrc(post.data.cover) }}"
           alt="{{ post.data.coverAlt }}"
-          {% if loop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+          {% if post.url == eagerCover %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
           decoding="async"
           sizes="100vw"
         >
       </div>
+      {% endif %}
       <div class="wrap story-copy">
         <time datetime="{{ post.date | isoDate }}">{{ post.date | zhDate }}</time>
         <h2>{{ post.data.title | brand | safe }}</h2>

@@ -97,6 +97,16 @@ if (serialAt < 0 || continueAt < 0 || newsAt < 0 || serialAt > continueAt || con
 }
 const chapter2Href = `${PATH_PREFIX}books/example/2/`.replace(/\/{2,}/g, "/");
 if (!home.includes(chapter2Href)) problems.push(`home continue link is missing ${chapter2Href}`);
+const aiTitleAt = home.indexOf("人工智能新鲜事");
+const sampleTitleAt = home.indexOf("开张啦");
+if (aiTitleAt < 0 || sampleTitleAt < 0 || aiTitleAt > sampleTitleAt) {
+  problems.push("home feed should list the AI post above the sample post");
+}
+const aiStory = [...home.matchAll(/<article class="story[\s\S]*?<\/article>/g)]
+  .map((match) => match[0])
+  .find((story) => story.includes("人工智能新鲜事"));
+if (!aiStory) problems.push("home is missing the AI story card");
+else if (/<img\b/i.test(aiStory)) problems.push("the coverless AI card on the home page includes an image");
 
 let sawPost = false;
 for (const file of htmlFiles) {
@@ -142,8 +152,15 @@ for (const file of htmlFiles) {
   if (rel.startsWith("posts/")) {
     sawPost = true;
     if (!text.includes("返回首页")) problems.push(`${rel} is missing the home button`);
-    if (!text.includes('loading="lazy"')) problems.push(`${rel} does not lazy-load below-fold images`);
-    if (!text.includes('loading="eager"')) problems.push(`${rel} cover is not eager`);
+    const imageCount = (text.match(/<img\b/gi) || []).length;
+    if (imageCount > 0) {
+      if (text.includes("story-hero") && !text.includes('loading="eager"')) {
+        problems.push(`${rel} cover is not eager`);
+      }
+      if (imageCount > 1 && !text.includes('loading="lazy"')) {
+        problems.push(`${rel} does not lazy-load below-fold images`);
+      }
+    }
     if (text.includes("cover.jpg") || text.includes("figure.jpg")) {
       problems.push(`${rel} still points at an unprocessed source image`);
     }
@@ -167,6 +184,14 @@ for (const file of htmlFiles) {
 }
 
 if (!sawPost) problems.push("built site has no post page");
+
+const aiPost = await readFile(path.join(siteDir, "posts/2026-10-27-ai-news/index.html"), "utf8");
+if (/<img\b|<picture\b/i.test(aiPost)) problems.push("AI post must not include images");
+if (aiPost.includes("芯片坐在") || aiPost.includes("都可以问问聊天助手。（示意插图）")) {
+  problems.push("AI post still includes an image caption");
+}
+if (!aiPost.includes("这些机器要运转，离不开芯片。")) problems.push("AI post is missing the chip paragraph");
+if (aiPost.includes("紫花开了")) problems.push("Waitara post should not be published in this build");
 
 const toc = await readFile(path.join(siteDir, "books/example/index.html"), "utf8");
 const chapter1At = toc.indexOf("第1章");
