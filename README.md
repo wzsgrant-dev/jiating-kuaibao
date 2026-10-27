@@ -1,6 +1,6 @@
 # 莲tara
 
-给家里看的静态小站。手机上打开，字大、对比清楚、没有登录，也没有统计和外部字体。唯一可以嵌进来的外部内容，是某一篇或某一章里写明的 B 站视频。页面发布在：
+静态小站。手机上打开，字大、对比清楚、深色背景、没有登录，也没有统计和外部字体。唯一可以嵌进来的外部内容，是某一篇或某一章里写明的 B 站视频。页面发布在：
 
 https://wzsgrant-dev.github.io/jiating-kuaibao/
 
@@ -40,7 +40,7 @@ excerpt: "今天去公园走了走，风很轻。"
 
 ## 怎么加一章连载
 
-书的名字、作者和译者说明只写在一个文件里：`src/_data/books.json`。它是一个数组，首页按这个顺序，一本书一张卡片。以后要再加一本书，就在数组里再加一个对象，`id` 用小写英文和短横线，例如 `example`。现在这本书还没选定，用的是占位「示例书名」，两章正文也都标着「示例」。
+书的名字、作者和译者说明只写在一个文件里：`src/_data/books.json`。它是一个数组，首页按这个顺序，一本书一张卡片。数组空着的时候，首页不显示连载。以后要加一本书，就在数组里加一个对象，`id` 用小写英文和短横线。
 
 加一章就是加一个 Markdown 文件，不用改别的页面：
 
@@ -80,7 +80,7 @@ bvid: BVxxxxxxxxxx
 
 `https://player.bilibili.com/player.html?bvid=BVxxxxxxxxxx&autoplay=0&danmaku=0`
 
-播放器懒加载，可以全屏。下面有一行「在B站打开」，链到 `https://www.bilibili.com/video/BVxxxxxxxxxx`。这是全站唯一允许的外部嵌入。示例文章和示例章节里故意没有真实的 BV 号。
+播放器懒加载，可以全屏。下面有一行「在B站打开」，链到 `https://www.bilibili.com/video/BVxxxxxxxxxx`。这是全站唯一允许的外部嵌入。没有写 `bvid` 的文章不会出现播放器。
 
 本地预览：
 
@@ -100,7 +100,7 @@ npm run preview
 
 ## English
 
-Family news, as a static site. Large type, high contrast, no accounts, and no analytics or hosted fonts, so it can open on a phone in mainland China. The only external embed allowed is a Bilibili player when a post or chapter sets `bvid`. It is published at:
+A static site. Large type, a dark background, high contrast, no accounts, and no analytics or hosted fonts, so it can open on a phone in mainland China. The only external embed allowed is a Bilibili player when a post or chapter sets `bvid`. It is published at:
 
 https://wzsgrant-dev.github.io/jiating-kuaibao/
 
@@ -138,7 +138,7 @@ excerpt: "今天去公园走了走，风很轻。"
 
 ### Add a chapter
 
-Book title, author, and the translator note live in one file: `src/_data/books.json`. It is an array. The home page shows one card per book, in that order. Another book is another object. `id` is lowercase letters, numbers, and hyphens. The current book is still a placeholder, 「示例书名」, and both sample chapters are marked 「示例」.
+Book title, author, and the translator note live in one file: `src/_data/books.json`. It is an array. The home page shows one card per book, in that order, and shows no serial section while the array is empty. Another book is another object. `id` is lowercase letters, numbers, and hyphens.
 
 Adding a chapter is one Markdown file:
 
@@ -178,7 +178,7 @@ A chapter uses the same field next to `book`, `chapter`, `title`, and `date`. Th
 
 `https://player.bilibili.com/player.html?bvid=BVxxxxxxxxxx&autoplay=0&danmaku=0`
 
-The player allows fullscreen. Under it, 「在B站打开」 links to `https://www.bilibili.com/video/BVxxxxxxxxxx`. This is the only external embed on the site. The sample post and sample chapters do not include a real BV id.
+The player allows fullscreen. Under it, 「在B站打开」 links to `https://www.bilibili.com/video/BVxxxxxxxxxx`. This is the only external embed on the site. A post or chapter without `bvid` has no player.
 
 Preview:
 
@@ -195,5 +195,3 @@ Open the printed URL, including `/jiating-kuaibao/`. `npm run dev` is the same p
 There is no section nav in v1. A `category` field is already collected into `collections.categories` (newest first within each name), and each card carries `data-category` without displaying it.
 
 To turn that into real sections, read `collections.categories` in `src/_includes/base.njk`, add one row of links, and give each category a page. Posts can stay where they are.
-
-The included post 「示例：莲tara 开张啦」 is a layout sample. Replace it with real notes. Its pictures are locally generated warm shapes, not photographs of people.

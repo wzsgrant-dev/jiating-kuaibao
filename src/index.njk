@@ -8,12 +8,11 @@ permalink: /
   <div class="wrap">
     <p class="seal" aria-hidden="true">{{ site.nameHan }}</p>
     <h1>{{ site.title | brand | safe }}</h1>
-    <p class="subtitle">
-      <span>{{ site.subtitleLead }}</span><span>{{ site.subtitleTail }}</span>
-    </p>
+    <p class="subtitle">{{ site.subtitleLead }}{{ site.subtitleTail }}</p>
   </div>
 </section>
 
+{% if books.length %}
 <section class="serial" aria-label="连载">
   {% for book in books %}
   {% set chapters = collections.chapters | bookChapters(book.id) %}
@@ -35,10 +34,11 @@ permalink: /
   </article>
   {% endfor %}
 </section>
+{% endif %}
 
-<section class="feed" aria-label="近况">
+<section class="feed" aria-label="资讯">
   <div class="wrap feed-label">
-    <h2>近况</h2>
+    <h2>资讯</h2>
   </div>
   {% set posts = collections.posts %}
   {% set eagerCover = posts | firstCoverUrl %}
@@ -60,13 +60,13 @@ permalink: /
         <time datetime="{{ post.date | isoDate }}">{{ post.date | zhDate }}</time>
         <h2>{{ post.data.title | brand | safe }}</h2>
         <p>{{ post | autoExcerpt }}</p>
-        <p class="more">阅读这一篇</p>
+        <p class="more">阅读全文</p>
       </div>
     </a>
   </article>
   {% else %}
   <div class="wrap empty">
-    <p>还没有近况。新的一篇写好以后，会出现在这里。</p>
+    <p>还没有文章。</p>
   </div>
   {% endfor %}
 </section>
