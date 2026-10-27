@@ -78,33 +78,35 @@ if (!css.includes("min-height: 56px") || !css.includes("min-height: 48px")) {
 }
 if (!css.includes("prefers-reduced-motion")) problems.push("stylesheet is missing reduced-motion rules");
 if (/https?:\/\//i.test(css) || /@import/i.test(css)) problems.push("stylesheet references an external resource");
+if (!css.includes("color-scheme: dark") || css.includes("color-scheme: light")) {
+  problems.push("stylesheet is not locked to the dark theme");
+}
+if (!css.includes("#1a1816") || !css.includes("#e6e1d8")) {
+  problems.push("stylesheet is missing the dark background or warm text color");
+}
 
 const home = await readFile(path.join(siteDir, "index.html"), "utf8");
-if (!home.includes("2026年10月26日")) problems.push("home page is missing the Chinese date");
+if (!home.includes("2026年10月27日")) problems.push("home page is missing the Chinese date");
 if (!home.includes("<title>莲tara</title>")) problems.push("home page title is not 莲tara");
-if (!home.includes("示例：") || !home.includes("开张啦")) problems.push("home page is missing the sample title");
+if (!home.includes('name="color-scheme" content="dark"')) problems.push("home page is not color-scheme dark");
+if (!home.includes('name="theme-color" content="#1A1816"')) problems.push("theme-color is not the dark background");
 if (home.includes("家庭快报")) problems.push("home page still says 家庭快报");
+if (home.includes("连载") || home.includes('class="serial"')) problems.push("home page shows a serial block with no books");
+if (!home.includes("来自悉尼的资讯与生活。")) problems.push("home subtitle is not the neutral line");
+if (!home.includes("阅读全文")) problems.push("home feed is missing 阅读全文");
 if (!home.includes(".webp") || !home.includes(".jpeg")) {
   problems.push("home page is missing WebP and JPEG sources");
 }
 const cssHref = PATH_PREFIX === "/" ? "/assets/site.css" : `${PATH_PREFIX}assets/site.css`;
 if (!home.includes(cssHref)) problems.push(`stylesheet link is not prefixed (${cssHref})`);
-const serialAt = home.indexOf("连载：《示例书名》");
-const continueAt = home.indexOf("继续读第2章");
-const newsAt = home.indexOf("开张啦");
-if (serialAt < 0 || continueAt < 0 || newsAt < 0 || serialAt > continueAt || continueAt > newsAt) {
-  problems.push("home serialization section must show 继续读第2章 above the news feed");
-}
-const chapter2Href = `${PATH_PREFIX}books/example/2/`.replace(/\/{2,}/g, "/");
-if (!home.includes(chapter2Href)) problems.push(`home continue link is missing ${chapter2Href}`);
-const aiTitleAt = home.indexOf("人工智能新鲜事");
-const sampleTitleAt = home.indexOf("开张啦");
-if (aiTitleAt < 0 || sampleTitleAt < 0 || aiTitleAt > sampleTitleAt) {
-  problems.push("home feed should list the AI post above the sample post");
+const aiTitleAt = home.indexOf("人工智能新动向");
+const waitaraTitleAt = home.indexOf("老采石场变公园");
+if (aiTitleAt < 0 || waitaraTitleAt < 0 || aiTitleAt > waitaraTitleAt) {
+  problems.push("home feed should list the AI post above the Waitara post");
 }
 const aiStory = [...home.matchAll(/<article class="story[\s\S]*?<\/article>/g)]
   .map((match) => match[0])
-  .find((story) => story.includes("人工智能新鲜事"));
+  .find((story) => story.includes("人工智能新动向"));
 if (!aiStory) problems.push("home is missing the AI story card");
 else if (/<img\b/i.test(aiStory)) problems.push("the coverless AI card on the home page includes an image");
 
@@ -117,6 +119,7 @@ for (const file of htmlFiles) {
   }
   if (!text.includes('lang="zh-Hans"')) problems.push(`${rel} is missing zh-Hans`);
   if (text.includes("家庭快报")) problems.push(`${rel} still says 家庭快报`);
+  if (text.includes("示例")) problems.push(`${rel} still contains 示例`);
   if (/(?:src|href)\s*=\s*["']\/\//i.test(text)) problems.push(`${rel} contains a protocol-relative URL`);
   const playerIds = new Set();
   const watchIds = new Set();
@@ -187,35 +190,29 @@ if (!sawPost) problems.push("built site has no post page");
 
 const aiPost = await readFile(path.join(siteDir, "posts/2026-10-27-ai-news/index.html"), "utf8");
 if (/<img\b|<picture\b/i.test(aiPost)) problems.push("AI post must not include images");
-if (aiPost.includes("芯片坐在") || aiPost.includes("都可以问问聊天助手。（示意插图）")) {
-  problems.push("AI post still includes an image caption");
+if (!aiPost.includes("人工智能行业最近有一条值得关注的消息")) {
+  problems.push("AI post is missing the replaced opening");
 }
-if (!aiPost.includes("这些机器要运转，离不开芯片。")) problems.push("AI post is missing the chip paragraph");
-if (aiPost.includes("紫花开了")) problems.push("Waitara post should not be published in this build");
+if (aiPost.includes("爸、妈") || aiPost.includes("问问家里人")) problems.push("AI post still has the old family wording");
 
-const toc = await readFile(path.join(siteDir, "books/example/index.html"), "utf8");
-const chapter1At = toc.indexOf("第1章");
-const chapter2At = toc.indexOf("第2章");
-if (chapter1At < 0 || chapter2At < 0 || chapter1At > chapter2At) {
-  problems.push("table of contents is not ordered by chapter number");
+const waitaraPost = await readFile(path.join(siteDir, "posts/2026-10-27-waitara/index.html"), "utf8");
+if (!waitaraPost.includes("旧厂房得到保留，前方是大片草坪。")) {
+  problems.push("Waitara post is missing the replaced caption");
 }
-const ch1 = await readFile(path.join(siteDir, "books/example/1/index.html"), "utf8");
-const ch2 = await readFile(path.join(siteDir, "books/example/2/index.html"), "utf8");
-if (!ch1.includes("2026年10月26日") || !ch2.includes("2026年10月1日")) {
-  problems.push("sample chapters should keep their dates, including the earlier date on chapter 2");
+if (!waitaraPost.includes("图：霍恩斯比区政府")) problems.push("Waitara post is missing the photo credit");
+if ((waitaraPost.match(/<img\b/gi) || []).length < 3) problems.push("Waitara post is missing its photos");
+try {
+  await stat(path.join(siteDir, "books"));
+  problems.push("book pages should not be generated when there are no books");
+} catch {
+  // no /books output
 }
-const ch1Href = `${PATH_PREFIX}books/example/1/`.replace(/\/{2,}/g, "/");
-const ch2Href = `${PATH_PREFIX}books/example/2/`.replace(/\/{2,}/g, "/");
-if (!ch1.includes(ch2Href) || !ch1.includes(">下一章<")) {
-  problems.push("chapter 1 should link 下一章 to chapter 2");
+try {
+  await stat(path.join(siteDir, "posts/2026-10-26-sample"));
+  problems.push("sample post should not be published");
+} catch {
+  // sample post removed
 }
-if (!ch2.includes(ch1Href) || !ch2.includes(">上一章<")) {
-  problems.push("chapter 2 should link 上一章 to chapter 1");
-}
-if (!ch1.includes('aria-disabled="true"') || !ch2.includes('aria-disabled="true"')) {
-  problems.push("missing chapters should keep a large disabled button");
-}
-if (!ch1.includes(">目录<") || !ch2.includes(">目录<")) problems.push("chapter pages are missing 目录");
 
 const js = await readFile(path.join(siteDir, "assets/scroll.js"), "utf8");
 if (/https?:\/\//i.test(js)) problems.push("scroll.js contains an http(s) URL");
