@@ -130,6 +130,11 @@ export default function (eleventyConfig) {
       .sort((a, b) => Number(a.data.chapter) - Number(b.data.chapter));
   });
 
+  eleventyConfig.addFilter("firstCoverUrl", (posts) => {
+    const found = (posts || []).find((post) => post.data.cover);
+    return found ? found.url : "";
+  });
+
   eleventyConfig.addFilter("chapterNav", (chapters, pageUrl) => {
     const list = chapters || [];
     const index = list.findIndex((item) => item.url === pageUrl);
@@ -193,8 +198,12 @@ export default function (eleventyConfig) {
     const posts = api.getFilteredByGlob("src/posts/**/*.md").filter((post) => !post.data.draft);
     for (const post of posts) {
       if (!post.data.title) throw new Error(`Post is missing title: ${post.inputPath}`);
-      if (!post.data.cover) throw new Error(`Post is missing cover: ${post.inputPath}`);
-      if (!post.data.coverAlt) throw new Error(`Post is missing coverAlt: ${post.inputPath}`);
+      if (post.data.cover && !post.data.coverAlt) {
+        throw new Error(`Post is missing coverAlt: ${post.inputPath}`);
+      }
+      if (!post.data.cover && post.data.coverAlt) {
+        throw new Error(`coverAlt requires a cover: ${post.inputPath}`);
+      }
       if (!(post.date instanceof Date) || Number.isNaN(post.date.getTime())) {
         throw new Error(`Post is missing date: ${post.inputPath}`);
       }

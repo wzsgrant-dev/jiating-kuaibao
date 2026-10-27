@@ -206,6 +206,24 @@ a:focus-visible,
   padding-bottom: 8px;
 }
 
+.story-plain {
+  background: var(--paper);
+  border-block: 1px solid var(--line);
+}
+
+.story-plain .story-copy {
+  padding-top: 22px;
+  padding-bottom: 18px;
+}
+
+.story-plain + .story {
+  margin-top: 48px;
+}
+
+.post-plain .post-head {
+  padding-top: 10px;
+}
+
 time {
   display: flex;
   align-items: center;
