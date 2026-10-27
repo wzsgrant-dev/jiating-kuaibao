@@ -374,6 +374,26 @@ time::before {
   margin: 0.4em 0 1.2em;
 }
 
+.post-body picture:has(+ em) {
+  margin-bottom: 10px;
+}
+
+.post-body picture + em {
+  display: block;
+  color: var(--soft);
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.post-body em + small {
+  display: block;
+  margin-top: 4px;
+  color: #5c4d43;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 .post-body img {
   border-radius: 18px;
 }
